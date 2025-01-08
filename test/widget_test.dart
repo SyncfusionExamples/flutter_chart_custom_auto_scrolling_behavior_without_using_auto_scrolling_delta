@@ -13,7 +13,7 @@ import 'package:auto_scrolling_delta_chart/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const AutoScrolling());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

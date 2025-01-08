@@ -3,31 +3,23 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(brightness: Brightness.dark),
+      home: const AutoScrolling(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class AutoScrolling extends StatefulWidget {
+  const AutoScrolling({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<AutoScrolling> createState() => _AutoScrollingState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _AutoScrollingState extends State<AutoScrolling> {
   DateTimeCategoryAxisController? _xAxisRenderer;
 
   final ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
@@ -61,12 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String dropdownValue = 'Start';
   final TextEditingController _textController = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DateTimeCategoryAxis'),
+        title: const Text('Auto-scrolling'),
       ),
       body: Column(
         children: <Widget>[
@@ -91,63 +83,59 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          Row(
-            children: [
-              // Text input for the number of days
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: SizedBox(
-                    width: 30,
-                    child: TextField(
-                      controller: _textController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Enter Days',
-                      ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Text input for the number of days
+                SizedBox(
+                  width: 100,
+                  child: TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Days',
                     ),
                   ),
                 ),
-              ),
 
-              // Dropdown to select Start or End
-              DropdownButton<String>(
-                value: dropdownValue,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
-                items: <String>['Start', 'End']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
+                // Dropdown to select Start or End
+                DropdownButton<String>(
+                  value: dropdownValue,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownValue = newValue!;
+                    });
+                  },
+                  items: <String>['Start', 'End']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
 
-              // Button to apply the range
-              ElevatedButton(
-                onPressed: () {
-                  int days = int.tryParse(_textController.text) ?? 1;
-                  // Ensure valid range
-                  days = days.clamp(1, chartData.length);
-                  if (dropdownValue == 'Start') {
-                    // Adjust for Start button
-                    _xAxisRenderer?.visibleMinimum = chartData[0].x;
-                    _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
-                  } else {
-                    // Adjust for End button
-                    _xAxisRenderer?.visibleMinimum =
-                        chartData[chartData.length - days].x;
+                // Button to apply the range
+                ElevatedButton(
+                  onPressed: () {
+                    int days = int.tryParse(_textController.text) ?? 1;
+                    days = days.clamp(1, chartData.length);
+                    if (dropdownValue == 'Start') {
+                      _xAxisRenderer?.visibleMinimum = chartData[0].x;
+                      _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
+                    } else {
+                      _xAxisRenderer?.visibleMinimum =
+                          chartData[chartData.length - days].x;
 
-                    _xAxisRenderer?.visibleMaximum = chartData.last.x;
-                  }
-                },
-                child: const Text('Apply'),
-              ),
-            ],
+                      _xAxisRenderer?.visibleMaximum = chartData.last.x;
+                    }
+                  },
+                  child: const Text('Apply'),
+                ),
+              ],
+            ),
           ),
         ],
       ),
