@@ -146,7 +146,6 @@ class _AutoScrollingState extends State<AutoScrolling> {
           _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
         } else {
           _xAxisRenderer?.visibleMinimum = chartData[chartData.length - days].x;
-
           _xAxisRenderer?.visibleMaximum = chartData.last.x;
         }
       },
