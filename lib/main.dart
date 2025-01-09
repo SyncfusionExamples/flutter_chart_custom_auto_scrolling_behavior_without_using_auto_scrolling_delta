@@ -21,50 +21,53 @@ class AutoScrolling extends StatefulWidget {
 
 class _AutoScrollingState extends State<AutoScrolling> {
   DateTimeCategoryAxisController? _xAxisRenderer;
-
-  final ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
-    enablePinching: true,
-    enableMouseWheelZooming: true,
-    enablePanning: true,
-  );
-
-  final List<ChartData> chartData = [
-    ChartData(DateTime(2023, 01, 01), 35),
-    ChartData(DateTime(2023, 01, 02), 28),
-    ChartData(DateTime(2023, 01, 03), 34),
-    ChartData(DateTime(2023, 01, 04), 32),
-    ChartData(DateTime(2023, 01, 05), 42),
-    ChartData(DateTime(2023, 01, 06), 35),
-    ChartData(DateTime(2023, 01, 07), 28),
-    ChartData(DateTime(2023, 01, 08), 34),
-    ChartData(DateTime(2023, 01, 09), 32),
-    ChartData(DateTime(2023, 01, 10), 42),
-    ChartData(DateTime(2023, 01, 11), 35),
-    ChartData(DateTime(2023, 01, 12), 28),
-    ChartData(DateTime(2023, 01, 13), 34),
-    ChartData(DateTime(2023, 01, 14), 32),
-    ChartData(DateTime(2023, 01, 15), 42),
-    ChartData(DateTime(2023, 01, 16), 35),
-    ChartData(DateTime(2023, 01, 17), 28),
-    ChartData(DateTime(2023, 01, 18), 34),
-    ChartData(DateTime(2023, 01, 19), 32),
-    ChartData(DateTime(2023, 01, 20), 42),
-  ];
+  late List<ChartData> chartData;
 
   String dropdownValue = 'Start';
   final TextEditingController _textController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _initializeChartData();
+  }
+
+  void _initializeChartData() {
+    chartData = [
+      ChartData(DateTime(2023, 01, 01), 35),
+      ChartData(DateTime(2023, 01, 02), 28),
+      ChartData(DateTime(2023, 01, 03), 34),
+      ChartData(DateTime(2023, 01, 04), 32),
+      ChartData(DateTime(2023, 01, 05), 42),
+      ChartData(DateTime(2023, 01, 06), 35),
+      ChartData(DateTime(2023, 01, 07), 28),
+      ChartData(DateTime(2023, 01, 08), 34),
+      ChartData(DateTime(2023, 01, 09), 32),
+      ChartData(DateTime(2023, 01, 10), 42),
+      ChartData(DateTime(2023, 01, 11), 35),
+      ChartData(DateTime(2023, 01, 12), 28),
+      ChartData(DateTime(2023, 01, 13), 34),
+      ChartData(DateTime(2023, 01, 14), 32),
+      ChartData(DateTime(2023, 01, 15), 42),
+      ChartData(DateTime(2023, 01, 16), 35),
+      ChartData(DateTime(2023, 01, 17), 28),
+      ChartData(DateTime(2023, 01, 18), 34),
+      ChartData(DateTime(2023, 01, 19), 32),
+      ChartData(DateTime(2023, 01, 20), 42),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Auto-scrolling'),
+        title: const Text(
+            'Auto-scrolling behavior without using the autoScrollingDelta property in Flutter Chart'),
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             child: SfCartesianChart(
-              zoomPanBehavior: _zoomPanBehavior,
               primaryXAxis: DateTimeCategoryAxis(
                 dateFormat: DateFormat.d(),
                 onRendererCreated: (DateTimeCategoryAxisController controller) {
@@ -88,57 +91,66 @@ class _AutoScrollingState extends State<AutoScrolling> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Text input for the number of days
-                SizedBox(
-                  width: 100,
-                  child: TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter Days',
-                    ),
-                  ),
-                ),
-
-                // Dropdown to select Start or End
-                DropdownButton<String>(
-                  value: dropdownValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  },
-                  items: <String>['Start', 'End']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-
-                // Button to apply the range
-                ElevatedButton(
-                  onPressed: () {
-                    int days = int.tryParse(_textController.text) ?? 1;
-                    days = days.clamp(1, chartData.length);
-                    if (dropdownValue == 'Start') {
-                      _xAxisRenderer?.visibleMinimum = chartData[0].x;
-                      _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
-                    } else {
-                      _xAxisRenderer?.visibleMinimum =
-                          chartData[chartData.length - days].x;
-
-                      _xAxisRenderer?.visibleMaximum = chartData.last.x;
-                    }
-                  },
-                  child: const Text('Apply'),
-                ),
+                _buildTextField(),
+                _buildDropdown(),
+                _buildApplyButton(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  // Text input for the number of days
+  Widget _buildTextField() {
+    return SizedBox(
+      width: 100,
+      child: TextField(
+        controller: _textController,
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          labelText: 'Enter Days',
+        ),
+      ),
+    );
+  }
+
+  // Dropdown to select Start or End
+  Widget _buildDropdown() {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+        });
+      },
+      items: <String>['Start', 'End']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+
+  // Button to apply the range
+  Widget _buildApplyButton() {
+    return ElevatedButton(
+      onPressed: () {
+        int days = int.tryParse(_textController.text) ?? 1;
+        days = days.clamp(1, chartData.length);
+        if (dropdownValue == 'Start') {
+          _xAxisRenderer?.visibleMinimum = chartData[0].x;
+          _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
+        } else {
+          _xAxisRenderer?.visibleMinimum = chartData[chartData.length - days].x;
+
+          _xAxisRenderer?.visibleMaximum = chartData.last.x;
+        }
+      },
+      child: const Text('Apply'),
     );
   }
 }
