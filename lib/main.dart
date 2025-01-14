@@ -7,23 +7,23 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark),
-      home: const AutoScrolling(),
+      home: const CustomAutoScrolling(),
     ),
   );
 }
 
-class AutoScrolling extends StatefulWidget {
-  const AutoScrolling({super.key});
+class CustomAutoScrolling extends StatefulWidget {
+  const CustomAutoScrolling({super.key});
 
   @override
-  State<AutoScrolling> createState() => _AutoScrollingState();
+  State<CustomAutoScrolling> createState() => _CustomAutoScrollingState();
 }
 
-class _AutoScrollingState extends State<AutoScrolling> {
+class _CustomAutoScrollingState extends State<CustomAutoScrolling> {
   DateTimeCategoryAxisController? _xAxisRenderer;
   late List<ChartData> chartData;
 
-  String dropdownValue = 'Start';
+  String customAutoScrollingMode = 'Start';
   final TextEditingController _textController = TextEditingController();
 
   @override
@@ -62,7 +62,7 @@ class _AutoScrollingState extends State<AutoScrolling> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-            'Auto-scrolling behavior without using the autoScrollingDelta property in Flutter Chart'),
+            'Auto-scrolling behavior without using the CustomAutoScrollingDelta property in Flutter Chart'),
       ),
       body: Column(
         children: <Widget>[
@@ -70,18 +70,18 @@ class _AutoScrollingState extends State<AutoScrolling> {
             child: SfCartesianChart(
               primaryXAxis: DateTimeCategoryAxis(
                 dateFormat: DateFormat.d(),
+                initialVisibleMinimum: DateTime(2023, 1, 1),
+                initialVisibleMaximum: DateTime(2023, 1, 20),
                 onRendererCreated: (DateTimeCategoryAxisController controller) {
                   _xAxisRenderer = controller;
                 },
-                initialVisibleMinimum: DateTime(2023, 1, 1),
-                initialVisibleMaximum: DateTime(2023, 1, 20),
               ),
               series: <LineSeries<ChartData, DateTime>>[
                 LineSeries<ChartData, DateTime>(
-                  animationDuration: 0,
                   dataSource: chartData,
                   xValueMapper: (ChartData chartData, int index) => chartData.x,
                   yValueMapper: (ChartData chartData, int index) => chartData.y,
+                  animationDuration: 0,
                 ),
               ],
             ),
@@ -91,9 +91,9 @@ class _AutoScrollingState extends State<AutoScrolling> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildTextField(),
-                _buildDropdown(),
-                _buildApplyButton(),
+                _customAutoScrollingDelta(),
+                _autoScrollingMode(),
+                _applyAutoScrolling(),
               ],
             ),
           ),
@@ -103,7 +103,7 @@ class _AutoScrollingState extends State<AutoScrolling> {
   }
 
   // Text input for the number of days
-  Widget _buildTextField() {
+  Widget _customAutoScrollingDelta() {
     return SizedBox(
       width: 100,
       child: TextField(
@@ -117,12 +117,12 @@ class _AutoScrollingState extends State<AutoScrolling> {
   }
 
   // Dropdown to select Start or End
-  Widget _buildDropdown() {
+  Widget _autoScrollingMode() {
     return DropdownButton<String>(
-      value: dropdownValue,
+      value: customAutoScrollingMode,
       onChanged: (String? newValue) {
         setState(() {
-          dropdownValue = newValue!;
+          customAutoScrollingMode = newValue!;
         });
       },
       items: <String>['Start', 'End']
@@ -136,12 +136,12 @@ class _AutoScrollingState extends State<AutoScrolling> {
   }
 
   // Button to apply the range
-  Widget _buildApplyButton() {
+  Widget _applyAutoScrolling() {
     return ElevatedButton(
       onPressed: () {
         int days = int.tryParse(_textController.text) ?? 1;
         days = days.clamp(1, chartData.length);
-        if (dropdownValue == 'Start') {
+        if (customAutoScrollingMode == 'Start') {
           _xAxisRenderer?.visibleMinimum = chartData[0].x;
           _xAxisRenderer?.visibleMaximum = chartData[days - 1].x;
         } else {
