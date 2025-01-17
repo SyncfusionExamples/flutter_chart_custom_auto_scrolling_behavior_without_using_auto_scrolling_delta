@@ -4,10 +4,9 @@ import 'package:intl/intl.dart';
 
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark),
-      home: const CustomAutoScrolling(),
+      home: CustomAutoScrolling(),
     ),
   );
 }
@@ -35,7 +34,7 @@ class _CustomAutoScrollingState extends State<CustomAutoScrolling> {
   void _initializeChartData() {
     chartData = [
       ChartData(DateTime(2023, 01, 01), 35),
-      ChartData(DateTime(2023, 01, 02), 28),
+      ChartData(DateTime(2023, 01, 02), 23),
       ChartData(DateTime(2023, 01, 03), 34),
       ChartData(DateTime(2023, 01, 04), 32),
       ChartData(DateTime(2023, 01, 05), 42),
@@ -60,10 +59,6 @@ class _CustomAutoScrollingState extends State<CustomAutoScrolling> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-            'Auto-scrolling behavior without using the CustomAutoScrollingDelta property in Flutter Chart'),
-      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -76,8 +71,12 @@ class _CustomAutoScrollingState extends State<CustomAutoScrolling> {
                   _xAxisRenderer = controller;
                 },
               ),
-              series: <LineSeries<ChartData, DateTime>>[
-                LineSeries<ChartData, DateTime>(
+              title: const ChartTitle(
+                  text:
+                      'Auto-scrolling behavior without using the CustomAutoScrollingDelta property in Flutter Chart',
+                  textStyle: TextStyle(fontWeight: FontWeight.bold)),
+              series: <ColumnSeries<ChartData, DateTime>>[
+                ColumnSeries<ChartData, DateTime>(
                   dataSource: chartData,
                   xValueMapper: (ChartData chartData, int index) => chartData.x,
                   yValueMapper: (ChartData chartData, int index) => chartData.y,
@@ -90,7 +89,7 @@ class _CustomAutoScrollingState extends State<CustomAutoScrolling> {
             padding: const EdgeInsets.all(10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+              children: <Widget>[
                 _customAutoScrollingDelta(),
                 _autoScrollingMode(),
                 _applyAutoScrolling(),
