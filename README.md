@@ -2,7 +2,7 @@
 
 This repository contains a sample to implement to achieve autoScrollingDelta behavior without using autoScrollingDelta property in [Syncfusion Flutter Chart](https://help.syncfusion.com/flutter/cartesian-charts/getting-started) widget.
 
-Refer KB through this link [KB]().
+Refer KB through this link [KB](https://support.syncfusion.com/kb/article/18745/how-to-achieve-the-auto-scrolling-delta-behavior-without-using-the-autoscrollingdelta-property-in-flutter-chart).
 
 ## Syncfusion controls:
 
